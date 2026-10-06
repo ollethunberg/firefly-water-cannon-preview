@@ -31,7 +31,7 @@ new ResizeObserver(updateMenuLayout).observe(siteHeader);
 document.fonts.ready.then(updateMenuLayout);
 updateMenuLayout();
 navigation.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)navigation.querySelectorAll('details').forEach(other=>{if(other!==d)other.open=false;});}));
-const steps=[['MONITOR','ZONES MONITORED','Flame detectors continuously monitor the defined protection zones.'],['DETECT & AIM','FIRE DETECTED / TARGET ACQUIRED','Detection triggers an alarm and directs the cannon towards the affected zone.'],['SUPPRESS','AUTOMATIC SUPPRESSION','The valve opens and water is released. After suppression, the system returns to its park position.']];
+const steps=[['MONITOR','ZONES MONITORED','Flame detectors continuously monitor the defined protection zones.'],['DETECT & AIM','FLAME DETECTED / TARGET ZONE','Flame detection triggers an alarm and directs the cannon towards the affected zone.'],['SUPPRESS','AUTOMATIC SUPPRESSION','The valve opens and suppression starts. Spraying can continue briefly after the fire is out before the cannon returns to its park position.']];
 const stageImages=[
   {file:'site.webp',alt:'Water cannon monitoring an outdoor recycling storage area'},
   {file:'stage-02-smoke.jpg',alt:'Illustrative edit showing smoke rising from material in the protected storage bay'},
@@ -67,7 +67,7 @@ reducedMotion.addEventListener('change',applyMotionPreference);applyMotionPrefer
 const applicationVideo=$('#application-video'),applicationImage=$('#application-image'),applicationPlay=$('#application-play');
 const applicationViews={
  'field-01':{kind:'FIELD FOOTAGE',title:'Automatic protection for open storage.',description:'Flame detectors monitor open storage areas and automatically direct the water cannon towards the affected zone when a fire is detected.'},
- 'field-02':{file:'targeted-water-aerial-loop',kind:'SUPPLIED FIRE-TEST FOOTAGE',title:'Targeted suppression. High-flow water.',description:'High-flow water is aimed at the detected fire, concentrating suppression where it is needed.'},
+ 'field-02':{file:'targeted-water-aerial-loop',kind:'SUPPLIED FIRE-TEST FOOTAGE',title:'Targeted suppression. High-flow water.',description:'High-flow water is applied at and around the fire, using controlled spray patterns.'},
  hall:{kind:'APPLICATION ILLUSTRATION',title:'Zone-based protection for storage bays.',description:'Flame detectors continuously monitor each protection zone. When a fire is detected, the cannon targets the affected bay and starts suppression automatically.'}
 };
 function updateApplicationControl(){applicationPlay.innerHTML=applicationVideo.paused?uiIcons.play:uiIcons.pause;applicationPlay.setAttribute('aria-label',applicationVideo.paused?'Play application film':'Pause application film');}

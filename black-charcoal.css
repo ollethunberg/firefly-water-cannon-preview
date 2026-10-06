@@ -78,3 +78,8 @@ body[data-theme=charcoal]{background:#3a3938;color:#fff;--bg:#3a3938;--panel:#3a
 footer>a{display:inline-flex;align-items:center;gap:8px}
 .cinema-control,.application-media button{display:grid;place-items:center}
 .cinema-control .ui-icon,.application-media button .ui-icon,.play .ui-icon{width:16px;height:16px}
+
+/* Colour-only indication of the current section; no layout changes. */
+.site-header .campaign-link[aria-current=location]{color:#ff652f}
+.site-header.is-compact nav.open .campaign-link[aria-current=location]{color:#ff652f!important}
+[data-theme=charcoal] .site-header .nav-contact[aria-current=location]{border-color:#ff652f;color:#ff652f!important}

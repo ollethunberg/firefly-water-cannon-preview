@@ -67,7 +67,7 @@ reducedMotion.addEventListener('change',applyMotionPreference);applyMotionPrefer
 const applicationVideo=$('#application-video'),applicationImage=$('#application-image'),applicationPlay=$('#application-play');
 const applicationViews={
  'field-01':{kind:'FIELD FOOTAGE',title:'Automatic protection for open storage.',description:'Flame detectors monitor open storage areas and automatically direct the water cannon towards the affected zone when a fire is detected.'},
- 'field-02':{file:'targeted-water',kind:'SUPPLIED FIRE-TEST FOOTAGE',title:'Targeted suppression. High-flow water.',description:'High-flow water is aimed at the detected fire, concentrating suppression where it is needed.'},
+ 'field-02':{file:'targeted-water-aerial',kind:'SUPPLIED FIRE-TEST FOOTAGE',title:'Targeted suppression. High-flow water.',description:'High-flow water is aimed at the detected fire, concentrating suppression where it is needed.'},
  hall:{kind:'APPLICATION ILLUSTRATION',title:'Zone-based protection for storage bays.',description:'Flame detectors continuously monitor each protection zone. When a fire is detected, the cannon targets the affected bay and starts suppression automatically.'}
 };
 function updateApplicationControl(){applicationPlay.innerHTML=applicationVideo.paused?uiIcons.play:uiIcons.pause;applicationPlay.setAttribute('aria-label',applicationVideo.paused?'Play application film':'Pause application film');}

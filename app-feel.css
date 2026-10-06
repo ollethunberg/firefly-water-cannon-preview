@@ -69,3 +69,25 @@ footer{padding-block:22px;margin-top:16px}
 @media(max-width:699px){.cinema-hero{min-height:560px;padding-bottom:42px}.cinema-stage{inset:12px 8px 120px}.cinema-heading h1{font-size:32px}.cinema-heading .hero-byline{font-size:16px}.intro,.models,.faq,.contact,.section-tone{padding-block:28px}.section-head{gap:12px;margin-bottom:18px}.intro-grid{gap:18px}.application-showcase{padding:12px;margin-top:22px;border-radius:14px}.application-tabs button,.filters button{padding:9px 12px;font-size:10px}.application-media{height:auto;aspect-ratio:1.4}.application-caption{grid-template-columns:1fr}[data-theme=charcoal] .application-caption{padding:16px 4px 4px;gap:10px}.application-caption h3{font-size:18px}.application-caption p{font-size:12px}.benefits{grid-template-columns:1fr;gap:8px}[data-theme=charcoal] .benefits article{padding:16px}.how-grid,.model-grid{padding:14px;gap:18px;border-radius:14px}.how-foot{gap:12px}.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.resource-body{padding:13px}.resource-body h3{font-size:13px;min-height:57px;margin-bottom:12px}.resource-body .text-button{font-size:10px;gap:5px}.resource-body .ui-icon{width:10px;height:10px}.doc-cover{aspect-ratio:16/9}.paper{height:80px;width:57px;padding:7px;font-size:5px;box-shadow:3px 4px 0 #0002}.paper img{height:32px}.doc-cover>span{display:none}.play span{width:36px;height:36px}.play .ui-icon{width:14px;height:14px}.faq-grid{gap:18px}.faq-grid>div{padding:0 16px}.faq summary{font-size:12px;line-height:1.6}.contact h2{font-size:30px}#contact-form{padding:18px}.form-pair{gap:12px}.contact-link{font-size:13px}footer{gap:12px}footer>span{line-height:1.6}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media(max-width:699px){.application-tabs{width:100%;overflow:visible}.application-tabs button{flex:1;min-width:0;white-space:normal;font-size:10px;padding:8px 7px;min-height:42px}}
+/* Scroll-led chapters keep the visual and active choice together. */
+.scroll-track{position:relative;margin-top:28px}
+.scroll-track .story-frame{margin-top:0}
+.scroll-track.is-pinned>.story-frame{position:sticky;top:var(--story-top,96px)}
+#how>.scroll-track{margin-top:0}
+#how .story-frame{background:#3a3938}
+#how .scene{height:clamp(180px,37svh,420px);aspect-ratio:auto}
+.application-showcase.story-frame .application-media{height:clamp(220px,36svh,420px);aspect-ratio:auto}
+.site-header .campaign-link[aria-current=location]{color:#ff652f}
+.site-header.is-compact nav.open .campaign-link[aria-current=location]{color:#ff652f!important}
+[data-theme=charcoal] .site-header .nav-contact[aria-current=location]{border-color:#ff652f;color:#ff652f!important}
+.step-list button{transition:background .2s,border-color .2s}
+@media(max-width:699px){.scroll-track{margin-top:22px}#how .scene{height:clamp(150px,26svh,240px)}.application-showcase.story-frame .application-media{height:clamp(190px,30svh,280px)}}
+@media(max-height:700px) and (max-width:899px){.step-list small{display:none}.step-list button{padding-block:12px}.section-head{margin-bottom:14px}.how-foot{margin-top:12px}#how .scene{height:150px}.application-showcase.story-frame .application-media{height:180px}}
+@media(prefers-reduced-motion:reduce){.step-list button{transition:none}}
+.application-showcase.story-frame .application-caption{min-height:110px}
+.story-frame .step-description p{min-height:40px}
+@media(max-width:699px){.application-showcase.story-frame .application-caption{min-height:158px}.story-frame .step-description p{min-height:60px}}
+#how .scene{--response-scene-height:clamp(210px,48svh,480px);height:var(--response-scene-height);max-width:calc(var(--response-scene-height)*1.6);margin-inline:auto}
+#step-panel{min-width:0}
+@media(max-width:699px){#how .scene{--response-scene-height:clamp(150px,26svh,240px)}}
+@media(max-height:700px) and (max-width:899px){#how .scene{--response-scene-height:150px}}

@@ -39,9 +39,9 @@ const stageImages=[
 ];
 stageImages.slice(1).forEach(stage=>{const image=new Image();image.src='assets/'+stage.file;});
 function setStep(i){document.querySelectorAll('[data-step]').forEach(b=>{let on=Number(b.dataset.step)===i;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});$('.scene').dataset.state=i;$('#step-image').src='assets/'+stageImages[i].file;$('#step-image').alt=stageImages[i].alt;$('#step-panel').setAttribute('aria-labelledby','step-'+i);$('#status-text').textContent=steps[i][1];$('#step-number').textContent='0'+(i+1)+' / '+steps[i][0];$('#step-text').textContent=steps[i][2];}
-document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>setStep(Number(b.dataset.step))));
+document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{setStep(Number(b.dataset.step));scrollToStoryStage('response',Number(b.dataset.step));}));
 function keyboardTabs(selector,select){const tabs=[...document.querySelectorAll(selector)];tabs.forEach((b,i)=>b.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight'||e.key==='ArrowDown')n=(i+1)%tabs.length;if(e.key==='ArrowLeft'||e.key==='ArrowUp')n=(i+tabs.length-1)%tabs.length;if(e.key==='Home')n=0;if(e.key==='End')n=tabs.length-1;if(n!==undefined){e.preventDefault();select(tabs[n]);tabs[n].focus();}}));}
-keyboardTabs('[data-step]',b=>setStep(Number(b.dataset.step)));
+keyboardTabs('[data-step]',b=>{setStep(Number(b.dataset.step));scrollToStoryStage('response',Number(b.dataset.step));});
 const models={dn50:{label:'DN50 / 2 INCH',range:'30',flow:'925',weight:'19 kg'},dn80:{label:'DN80 / 3 INCH',range:'45',flow:'3,250',weight:'30 kg'}};
 function setModel(key){const m=models[key];document.querySelectorAll('[data-model]').forEach(b=>{const on=b.dataset.model===key;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});$('#model-panel').setAttribute('aria-labelledby',key+'-tab');$('#model-heading').textContent=m.label;$('#range').replaceChildren(document.createTextNode(m.range),Object.assign(document.createElement('span'),{textContent:'m'}));$('#flow').textContent=m.flow;$('#weight').textContent=m.weight;$('#model-image').src='assets/'+key+'.webp';$('#model-image').alt='Firefly '+key.toUpperCase()+' water cannon';}
 document.querySelectorAll('[data-model]').forEach(b=>b.addEventListener('click',()=>setModel(b.dataset.model)));keyboardTabs('[data-model]',b=>setModel(b.dataset.model));
@@ -73,8 +73,72 @@ const applicationViews={
 function updateApplicationControl(){applicationPlay.innerHTML=applicationVideo.paused?uiIcons.play:uiIcons.pause;applicationPlay.setAttribute('aria-label',applicationVideo.paused?'Play application film':'Pause application film');}
 applicationVideo.addEventListener('play',updateApplicationControl);applicationVideo.addEventListener('pause',updateApplicationControl);
 applicationPlay.addEventListener('click',()=>{if(applicationVideo.paused)applicationVideo.play().catch(updateApplicationControl);else applicationVideo.pause();});
-document.querySelectorAll('[data-application]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.application,view=applicationViews[key];document.querySelectorAll('[data-application]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));$('#application-kind').textContent=view.kind;$('#application-title').textContent=view.title;$('#application-description').textContent=view.description;const still=key==='hall';applicationVideo.pause();applicationVideo.hidden=still;applicationImage.hidden=!still;$('#application-illustration-label').hidden=!still;applicationPlay.hidden=still;if(!still){applicationVideo.src='assets/'+(view.file||key)+'.mp4';applicationVideo.poster='assets/'+(view.file||key)+'-poster.jpg';if(!reducedMotion.matches)applicationVideo.play().catch(updateApplicationControl);}updateApplicationControl();}));
+function setApplication(key){const view=applicationViews[key];document.querySelectorAll('[data-application]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.application===key)));$('#application-kind').textContent=view.kind;$('#application-title').textContent=view.title;$('#application-description').textContent=view.description;const still=key==='hall';applicationVideo.pause();applicationVideo.hidden=still;applicationImage.hidden=!still;$('#application-illustration-label').hidden=!still;applicationPlay.hidden=still;if(!still){applicationVideo.src='assets/'+(view.file||key)+'.mp4';applicationVideo.poster='assets/'+(view.file||key)+'-poster.jpg';if(!reducedMotion.matches)applicationVideo.play().catch(updateApplicationControl);}updateApplicationControl();}
+document.querySelectorAll('[data-application]').forEach((button,i)=>button.addEventListener('click',()=>{setApplication(button.dataset.application);scrollToStoryStage('applications',i);}));
 if(reducedMotion.matches)applicationVideo.pause();reducedMotion.addEventListener('change',()=>{if(reducedMotion.matches)applicationVideo.pause();});
 const languageMenu=document.querySelector('.site-language');
 document.addEventListener('click',e=>{if(!languageMenu.contains(e.target))languageMenu.open=false;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&languageMenu.open){languageMenu.open=false;languageMenu.querySelector('summary').focus();}});
+
+
+// Scrolling drives the story; manual selection moves to that same story position.
+const scrollStories=[...document.querySelectorAll('[data-scroll-story]')].map(track=>({
+  track,frame:track.querySelector('.story-frame'),count:Number(track.dataset.storyStages),active:-1,enabled:false
+}));
+const sectionLinks=[...navigation.querySelectorAll('a[href^="#"]')];
+const trackedSections=[...document.querySelectorAll('main>section')];
+let storyFramePending=false;
+function measureStories(){
+  const top=siteHeader.getBoundingClientRect().height+16;
+  document.documentElement.style.setProperty('--story-top',top+'px');
+  scrollStories.forEach(story=>{
+    // Read the frame without collapsing the track: doing so can move the viewport.
+    const height=story.frame.getBoundingClientRect().height;
+    story.enabled=height<=innerHeight-top-16;
+    story.span=Math.max(300,innerHeight*.55);
+    if(story.enabled){story.track.style.height=(height+story.span*story.count)+'px';story.track.classList.add('is-pinned');}
+    else{story.track.style.height='auto';story.track.classList.remove('is-pinned');}
+  });
+  queueStoryUpdate();
+}
+function chooseStoryStage(story,index){
+  if(story.active===index)return;
+  story.active=index;story.track.dataset.activeStage=index;
+  if(story.track.dataset.scrollStory==='response')setStep(index);
+  else setApplication(['field-01','field-02','hall'][index]);
+}
+function scrollToStoryStage(id,index){
+  const story=scrollStories.find(s=>s.track.dataset.scrollStory===id);
+  if(!story)return;
+  story.active=index;story.track.dataset.activeStage=index;
+  if(!story.enabled)return;
+  const top=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--story-top'));
+  // An instant move avoids flashing the other stages while navigating by keyboard.
+  window.scrollTo({top:story.track.getBoundingClientRect().top+scrollY-top+(index+.5)*story.span,behavior:'instant'});
+}
+function updateScrollStories(){
+  storyFramePending=false;
+  const top=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--story-top'))||96;
+  scrollStories.forEach(story=>{
+    const rect=story.track.getBoundingClientRect();
+    if(rect.bottom<top||rect.top>innerHeight*.85)return;
+    if(story.enabled){
+      const distance=Math.max(0,top-rect.top);
+      chooseStoryStage(story,Math.min(story.count-1,Math.floor(distance/story.span)));
+    }
+  });
+  const marker=top+Math.min(160,innerHeight*.2);
+  let current=trackedSections[0];
+  trackedSections.forEach(section=>{if(section.getBoundingClientRect().top<=marker)current=section;});
+  sectionLinks.forEach(link=>{
+    const active=link.hash==='#'+current.id;
+    if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');
+  });
+}
+function queueStoryUpdate(){if(!storyFramePending){storyFramePending=true;requestAnimationFrame(updateScrollStories);}}
+addEventListener('scroll',queueStoryUpdate,{passive:true});
+addEventListener('resize',measureStories);
+new ResizeObserver(measureStories).observe(siteHeader);
+scrollStories.forEach(story=>new ResizeObserver(measureStories).observe(story.frame));
+document.fonts.ready.then(measureStories);
+measureStories();

@@ -1,0 +1,51 @@
+/* Three applications of the current Firefly digital palette.
+   #ff652f orange / #021a44 navy / #1b2b46 text / #3a3938 charcoal
+   #646f8d secondary / #a7a9b4 gray / #e6e8f2 pale / #f2f4f8 background. */
+body[data-theme=light]{--bg:#fff;--panel:#f2f4f8}
+[data-theme=light] .cinema-hero,[data-theme=light] .cinema-hero:before{background:#fff;color:#1b2b46}
+[data-theme=light] .cinema-hero:after{background:linear-gradient(90deg,#fff 0%,#fffffff0 26%,#ffffff75 52%,transparent 85%)}
+[data-theme=light] .cinema-stage:after{background:linear-gradient(180deg,#fff 0%,transparent 22%,transparent 72%,#fff 100%)}
+[data-theme=light] .cinema-heading h1{color:#1b2b46;text-shadow:none}
+[data-theme=light] .cinema-heading .hero-byline{color:#646f8d;text-shadow:none}
+[data-theme=light] .cinema-summary .button.secondary{color:#ff652f;border-color:#ff652f}
+[data-theme=light] .cinema-summary .button.secondary:hover{color:#fff}
+[data-theme=light] .intro,[data-theme=light] .models,[data-theme=light] .faq,[data-theme=light] .contact,[data-theme=light] footer{background:#fff}
+[data-theme=light] .section-tone{background:#f2f4f8}
+[data-theme=light] .benefits article,[data-theme=light] .resource-card{background:#fff}
+[data-theme=light] .intro-grid h2{color:#021a44}
+body[data-theme=navy]{background:#f2f4f8}
+[data-theme=navy] header{background:#021a44;color:#fff;border-color:#1b2b46}
+[data-theme=navy] header nav,[data-theme=navy] header nav a,[data-theme=navy] .menu-toggle{color:#fff;background:#021a44}
+[data-theme=navy] .cinema-hero,[data-theme=navy] .cinema-hero:before{background:#021a44}
+[data-theme=navy] .cinema-hero:after{background:linear-gradient(90deg,#021a44 0%,#021a44ef 27%,#021a4450 65%,transparent 90%)}
+[data-theme=navy] .cinema-stage:after{background:linear-gradient(180deg,#021a44 0%,transparent 22%,transparent 72%,#021a44 100%)}
+[data-theme=navy] .how{background:#021a44;color:#fff}
+[data-theme=navy] .how .muted,[data-theme=navy] .how .step-list small,[data-theme=navy] .how .step-list strong,[data-theme=navy] .how .step-list button>span,[data-theme=navy] .how .step-description p,[data-theme=navy] .how .how-foot{color:#e6e8f2}
+[data-theme=navy] .how .step-list [aria-selected=true] strong,[data-theme=navy] .how .step-list [aria-selected=true]>span{color:#ff652f}
+[data-theme=navy] .how .step-list button,[data-theme=navy] .how-foot{border-color:#646f8d}
+[data-theme=navy] .how .text-button{color:#fff}
+[data-theme=navy] .resource-card{background:#fff}
+[data-theme=navy] .model-visual,[data-theme=navy] .application-caption{background:#e6e8f2}
+[data-theme=navy] footer{background:#021a44;color:#fff;border-color:#646f8d}
+[data-theme=navy] footer p,[data-theme=navy] footer>span{color:#e6e8f2}
+body[data-theme=charcoal]{background:#fff;color:#3a3938}
+[data-theme=charcoal] header,[data-theme=charcoal] header nav{background:#3a3938;color:#fff;border-color:#a7a9b4}
+[data-theme=charcoal] header nav a,[data-theme=charcoal] .menu-toggle{color:#fff}
+[data-theme=charcoal] .cinema-hero,[data-theme=charcoal] .cinema-hero:before{background:#3a3938}
+[data-theme=charcoal] .cinema-hero:after{background:linear-gradient(90deg,#3a3938 0%,#3a3938f0 26%,#3a393850 65%,transparent 90%)}
+[data-theme=charcoal] .cinema-stage:after{background:linear-gradient(180deg,#3a3938 0%,transparent 22%,transparent 72%,#3a3938 100%)}
+[data-theme=charcoal] .intro,[data-theme=charcoal] .faq,[data-theme=charcoal] .contact{background:#fff}
+[data-theme=charcoal] .intro h2,[data-theme=charcoal] .models h2,[data-theme=charcoal] .faq h2,[data-theme=charcoal] .contact h2{color:#3a3938}
+[data-theme=charcoal] .how{background:#f2f4f8}
+[data-theme=charcoal] .model-visual{background:#e6e8f2}
+[data-theme=charcoal] .resources{background:#3a3938;color:#fff}
+[data-theme=charcoal] .resources .muted,[data-theme=charcoal] .resources .resource-status{color:#e6e8f2}
+[data-theme=charcoal] .resources .filters button{color:#fff;border-color:#a7a9b4}
+[data-theme=charcoal] .resources .filters button span{color:#e6e8f2}
+[data-theme=charcoal] .resources .resource-card{background:#fff;color:#3a3938}
+[data-theme=charcoal] footer{background:#3a3938;color:#fff;border-color:#a7a9b4}
+[data-theme=charcoal] footer p,[data-theme=charcoal] footer>span{color:#e6e8f2}
+[data-theme=navy] .nav-contact,[data-theme=charcoal] .nav-contact{background:#ff652f!important;color:#fff!important}
+[data-theme=navy] .nav-contact:hover,[data-theme=charcoal] .nav-contact:hover{background:transparent!important;color:#ff652f!important}
+@media(min-width:1000px){[data-theme=navy] header nav,[data-theme=charcoal] header nav{background:transparent}}
+@media(max-width:699px){[data-theme=light] .cinema-hero:after{background:linear-gradient(180deg,transparent 0%,#ffffff10 30%,#ffffffb0 58%,#fff 80%)}[data-theme=navy] .cinema-hero:after{background:linear-gradient(180deg,transparent 0%,#021a4410 30%,#021a44b0 58%,#021a44 80%)}[data-theme=charcoal] .cinema-hero:after{background:linear-gradient(180deg,transparent 0%,#3a393810 30%,#3a3938b0 58%,#3a3938 80%)}}

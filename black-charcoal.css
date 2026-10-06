@@ -1,0 +1,70 @@
+/* Black hero, Firefly charcoal sections, current-site navigation treatment. */
+body[data-theme=charcoal]{background:#3a3938;color:#fff;--bg:#3a3938;--panel:#3a3938;--ink:#fff;--muted:#e6e8f2;--line:#a7a9b477}
+[data-theme=charcoal] .cinema-hero,[data-theme=charcoal] .cinema-hero:before{background:#000}
+[data-theme=charcoal] .cinema-hero:after{background:linear-gradient(90deg,#000 0%,#000e 26%,#0004 65%,transparent 90%)}
+[data-theme=charcoal] .cinema-stage:after{background:linear-gradient(180deg,#000 0%,transparent 22%,transparent 72%,#000 100%)}
+[data-theme=charcoal] .intro,[data-theme=charcoal] .how,[data-theme=charcoal] .models,[data-theme=charcoal] .resources,[data-theme=charcoal] .faq,[data-theme=charcoal] .contact,[data-theme=charcoal] footer{background:#3a3938;color:#fff}
+[data-theme=charcoal] h2,[data-theme=charcoal] h3,[data-theme=charcoal] .specs dd,[data-theme=charcoal] .step-description p,[data-theme=charcoal] .text-button,[data-theme=charcoal] .faq summary{color:#fff}
+[data-theme=charcoal] .intro h2,[data-theme=charcoal] .models h2,[data-theme=charcoal] .faq h2,[data-theme=charcoal] .contact h2{color:#fff}
+[data-theme=charcoal] .muted,[data-theme=charcoal] .body-large,[data-theme=charcoal] .benefits p,[data-theme=charcoal] .specs dt,[data-theme=charcoal] .main-specs div>span,[data-theme=charcoal] .spec-note,[data-theme=charcoal] .visual-note,[data-theme=charcoal] .resource-meta,[data-theme=charcoal] details p,[data-theme=charcoal] .how-foot,[data-theme=charcoal] .step-list strong,[data-theme=charcoal] .step-list small,[data-theme=charcoal] .step-list button>span,[data-theme=charcoal] .contact p,[data-theme=charcoal] .contact label,[data-theme=charcoal] .form-note{color:#e6e8f2}
+[data-theme=charcoal] .step-list [aria-selected=true] strong,[data-theme=charcoal] .step-list [aria-selected=true]>span{color:#ff652f}
+[data-theme=charcoal] .benefits article,[data-theme=charcoal] .model-visual,[data-theme=charcoal] .application-caption,[data-theme=charcoal] .resources .resource-card,[data-theme=charcoal] #form-result{background:#3a3938;color:#fff;border:1px solid #a7a9b466}
+[data-theme=charcoal] .application-caption p,[data-theme=charcoal] .application-caption h3{color:#e6e8f2}
+[data-theme=charcoal] .application-tabs button,[data-theme=charcoal] .filters button{color:#fff;border-color:#a7a9b4}
+[data-theme=charcoal] .model-switch{background:#0003}[data-theme=charcoal] .model-switch button{color:#fff}[data-theme=charcoal] .model-switch [aria-selected=true]{background:#ff652f;color:#fff}
+[data-theme=charcoal] .contact input,[data-theme=charcoal] .contact textarea{background:#3a3938;color:#fff;border-color:#a7a9b4}
+[data-theme=charcoal] .models .button.secondary{color:#fff;border-color:#fff}
+[data-theme=charcoal] .scene-status{color:#fff}
+/* Center campaign links; compact navigation is triggered by available space. */
+[data-theme=charcoal] .site-header{background:#000;color:#fff;border-bottom:0;padding:20px 4vw;gap:20px;display:flex;align-items:center;backdrop-filter:none;-webkit-backdrop-filter:none}
+.site-header .brand{flex-shrink:0}.site-header .brand img{width:145px}
+[data-theme=charcoal] .site-header nav,[data-theme=charcoal] .site-header nav.open{position:static;display:grid;grid-template-columns:minmax(0,1fr) auto;padding:0;border:0;background:transparent;color:#fff;gap:20px;flex:1;align-items:center;min-width:0}
+.site-header .campaign-links{display:flex;align-items:center;justify-content:center;gap:clamp(16px,1.4vw,22px);min-width:0}
+.site-header .campaign-link{font:500 11px Poppins,Arial,sans-serif;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+[data-theme=charcoal] .site-header .nav-contact{color:#fff!important;background:transparent!important;border:1px solid #fff;padding:10px 18px;font-size:11px;white-space:nowrap;margin:0}
+[data-theme=charcoal] .site-header .nav-contact:hover{background:#ff652f!important;border-color:#ff652f;color:#fff!important}
+.site-header .menu-close{display:none}.site-header .menu-toggle{display:none;order:3;border:0;border-radius:0;background:transparent;color:#fff;width:44px;height:44px;padding:10px}.menu-toggle svg{fill:currentColor}.site-menu-open{overflow:hidden}
+.site-language{position:relative;flex-shrink:0;border:0;order:4;margin-left:0}
+.site-language>summary{display:flex;align-items:center;gap:5px;padding:0 15px 0 0;font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap;color:#fff}
+.site-language>summary:after{content:'⌄';font-size:12px;top:0;right:-4px;color:#fff}
+.site-language img{width:18px;height:12px;object-fit:fill;flex-shrink:0}
+.site-language>div{position:absolute;right:0;top:calc(100% + 17px);background:#3a3938;color:#fff;min-width:132px;padding:16px 14px;border:1px solid #a7a9b433;display:grid;gap:16px;border-radius:8px}
+.site-language>div a{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:#fff;white-space:nowrap;letter-spacing:.02em}
+.site-language>div a:hover{color:#ff652f}
+[data-theme=charcoal] .site-header.is-compact{padding:14px 16px;gap:12px}
+.site-header.is-compact .brand img{width:140px}.site-header.is-compact .menu-toggle{display:block;margin-left:auto}
+[data-theme=charcoal] .site-header.is-compact nav{display:none}
+[data-theme=charcoal] .site-header.is-compact nav.open{display:flex;position:fixed;inset:0;height:100dvh;max-height:100dvh;background:#fff;color:#000;padding:75px 16px 30px;overflow-y:auto;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;z-index:100}
+.site-header.is-compact .menu-close{display:flex;position:absolute;top:24px;right:15px;border:0;background:transparent;color:#ff652f;padding:8px;align-items:center;justify-content:center;width:44px;height:44px}
+.site-header.is-compact .campaign-links{flex-direction:column;align-items:stretch;gap:0}
+.site-header.is-compact nav.open .campaign-link{color:#000!important;font-size:20px;line-height:1.5;padding:18px 0 30px;white-space:normal}
+[data-theme=charcoal] .site-header.is-compact nav.open .nav-contact{align-self:flex-start;margin:15px 0;background:#ff652f!important;border-color:#ff652f!important;color:#fff!important}
+@media(max-width:699px){[data-theme=charcoal] .cinema-hero:after{background:linear-gradient(180deg,transparent 0%,#0001 30%,#000b 58%,#000 80%)}}
+#application-illustration-label{position:absolute;bottom:16px;left:16px;background:#1b2b46dd;color:#fff;padding:7px 11px;border-radius:4px;font-size:10px;font-weight:300;pointer-events:none}
+#application-illustration-label[hidden]{display:none}
+
+/* Overview: headline, lead, supporting description and integration note. */
+.intro-grid{display:grid;grid-template-columns:1fr;align-items:start;text-align:left;max-width:none;gap:28px}
+.intro-grid h2{margin:0;max-width:none}
+.intro-grid>.intro-copy{max-width:480px;margin:0}
+[data-theme=charcoal] .intro-copy .intro-lead{font-size:clamp(21px,2.1vw,28px);font-weight:300;line-height:1.4;letter-spacing:-.02em;color:#fff;margin-bottom:22px}
+[data-theme=charcoal] .intro-copy .intro-description{font-size:15px;line-height:1.8;color:#e6e8f2;margin-bottom:20px}
+[data-theme=charcoal] .intro-copy .intro-note{font-size:13px;line-height:1.75;color:#c3c4cc;margin-bottom:0}
+@media(min-width:900px){.intro-grid{grid-template-columns:1.1fr 1fr;gap:clamp(40px,6vw,90px)}}
+@media(max-width:699px){.intro-grid{gap:26px}.intro-copy .intro-lead{max-width:290px}}
+
+/* Three matching scenes make monitoring, detection and suppression visible. */
+.scene>img{opacity:.85}
+.scene-note{position:absolute;bottom:12px;left:12px;padding:5px 8px;background:#0009;color:#fff;font-size:9px;line-height:1.4}
+
+/* Bay outlines use photo coordinates and share the image's responsive crop. */
+.bay-zones{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.bay-zones .zone-area{fill:#ffffff08;stroke:#ffffffb3;stroke-width:1;stroke-dasharray:6 5;vector-effect:non-scaling-stroke;transition:fill .25s,stroke .25s}
+.bay-zones .zone-label{fill:#fff;font:500 22px Poppins,Arial,sans-serif;letter-spacing:2px;paint-order:stroke;stroke:#0009;stroke-width:3px;stroke-linejoin:round}
+.bay-zones .zone-target{fill:none;stroke:#ff652f;stroke-width:2;vector-effect:non-scaling-stroke;opacity:0}
+.scene[data-state='1'] .bay-zones .z2{fill:#ff652f24;stroke:#ff652f}
+.scene[data-state='2'] .bay-zones .z2{fill:#96d7f814;stroke:#bde8ff}
+.scene[data-state='1'] .zone-target,.scene[data-state='2'] .zone-target{opacity:1}
+
+/* Custom benefit icons follow the website industry icons: thin, unfilled lines. */
+.benefits .benefit-icon{display:block;width:48px;height:48px;margin-bottom:24px;object-fit:contain}

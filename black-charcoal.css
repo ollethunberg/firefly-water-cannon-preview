@@ -127,3 +127,17 @@ footer>a{display:inline-flex;align-items:center;gap:8px}
   .application-card-arrows button:disabled{opacity:.3;cursor:default}
   .application-card-arrows .ui-icon{width:16px;height:16px}
 }
+
+/* All campaign text buttons share the hero's dimensions. */
+:root{--campaign-button-height:38px;--campaign-button-font:10px;--campaign-button-y:12px;--campaign-button-x:20px}
+[data-theme=charcoal] :is(.button,.cinema-summary .button,.application-tabs button,.model-switch button,.filters button,.site-header .nav-contact){
+  display:inline-flex;align-items:center;justify-content:center;
+  height:var(--campaign-button-height);min-height:var(--campaign-button-height);
+  padding:var(--campaign-button-y) var(--campaign-button-x);
+  font-family:Poppins,Arial,sans-serif;font-weight:500;font-size:var(--campaign-button-font);line-height:1;letter-spacing:.03em;
+}
+.model-switch button{gap:4px}
+.filters button span{font-size:inherit}
+@media(max-width:699px){:root{--campaign-button-height:36px;--campaign-button-font:9px;--campaign-button-y:11px;--campaign-button-x:16px}}
+
+@media(max-width:699px){.filters{flex-wrap:wrap;overflow:visible}}

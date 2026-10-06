@@ -55,15 +55,49 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-video]');i
 $('#close-video').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});dialog.addEventListener('close',()=>{player.pause();player.removeAttribute('src');player.load();opener?.focus();});player.addEventListener('error',()=>{if(player.getAttribute('src'))$('#video-error').hidden=false;});
 $('#contact-form').addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target);const result=$('#form-result');result.hidden=false;result.textContent=`Enquiry preview — nothing has been sent.\n\n${d.get('name')} · ${d.get('company')}\n${d.get('email')}\n\n${d.get('message')}`;});
 
-// Cinematic landing excerpt, with explicit pause and reduced-motion support.
-const heroVideo = document.querySelector('#hero-video');
-const heroPlay = document.querySelector('#hero-play');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-function updateHeroControl(){heroPlay.innerHTML=heroVideo.paused?uiIcons.play:uiIcons.pause;heroPlay.setAttribute('aria-label',heroVideo.paused?'Play hero film':'Pause hero film');}
-heroVideo.addEventListener('play',updateHeroControl);heroVideo.addEventListener('pause',updateHeroControl);
-heroPlay.addEventListener('click',()=>{if(heroVideo.paused)heroVideo.play().catch(updateHeroControl);else heroVideo.pause();});
-function applyMotionPreference(){if(reducedMotion.matches){heroVideo.removeAttribute('autoplay');heroVideo.pause();}else{heroVideo.play().catch(updateHeroControl);}updateHeroControl();}
-reducedMotion.addEventListener('change',applyMotionPreference);applyMotionPreference();
+// Silent inline films start when visible and retry when media becomes ready.
+// Explicit pauses are retained; off-screen films never compete with the hero.
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const mobileApplications=matchMedia('(max-width:699px)');
+const ambientFilms=[];
+const filmVisibility=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    const state=ambientFilms.find(item=>item.video===entry.target);
+    state.visible=entry.isIntersecting&&entry.intersectionRatio>=.15;
+    if(!state.visible)state.userStarted=false;
+    syncAmbientFilm(state);
+  });
+},{threshold:[0,.15]});
+function syncAmbientFilm(state){
+  const {video}=state;
+  if(!state.visible||!state.enabled()||document.hidden||state.userPaused||(reducedMotion.matches&&!state.userStarted)){
+    if(!video.paused)video.pause();
+    return;
+  }
+  if(video.dataset.src&&!video.getAttribute('src'))video.src=video.dataset.src;
+  if(video.paused)video.play().catch(state.updateControl);
+}
+function ambientFilm(video,button,enabled,label){
+  video.muted=true;video.defaultMuted=true;video.playsInline=true;
+  const state={video,visible:false,userPaused:false,userStarted:false,enabled,
+    updateControl:()=>{button.innerHTML=video.paused?uiIcons.play:uiIcons.pause;button.setAttribute('aria-label',(video.paused?'Play ':'Pause ')+label);}};
+  ambientFilms.push(state);
+  ['play','pause','error'].forEach(event=>video.addEventListener(event,state.updateControl));
+  ['loadedmetadata','loadeddata','canplay'].forEach(event=>video.addEventListener(event,()=>syncAmbientFilm(state)));
+  button.addEventListener('click',()=>{
+    if(video.paused){state.userPaused=false;state.userStarted=true;if(video.dataset.src&&!video.getAttribute('src'))video.src=video.dataset.src;video.play().catch(state.updateControl);}
+    else{state.userPaused=true;state.userStarted=false;video.pause();}
+  });
+  state.updateControl();filmVisibility.observe(video);return state;
+}
+const heroVideo=$('#hero-video'),heroPlay=$('#hero-play');
+ambientFilm(heroVideo,heroPlay,()=>true,'hero film');
+function syncAmbientFilms(){ambientFilms.forEach(syncAmbientFilm);}
+reducedMotion.addEventListener('change',syncAmbientFilms);
+document.addEventListener('visibilitychange',syncAmbientFilms);
+addEventListener('pageshow',syncAmbientFilms);
+// If Safari denies autoplay, the first ordinary page interaction retries it.
+document.addEventListener('pointerup',syncAmbientFilms,{passive:true});
 
 const applicationVideo=$('#application-video'),applicationImage=$('#application-image'),applicationPlay=$('#application-play');
 const applicationViews={
@@ -71,12 +105,52 @@ const applicationViews={
  'field-02':{file:'targeted-water-aerial-loop',kind:'SUPPLIED FIRE-TEST FOOTAGE',title:'Targeted suppression. High-flow water.',description:'High-flow water is applied at and around the fire, using controlled spray patterns.'},
  hall:{kind:'APPLICATION ILLUSTRATION',title:'Zone-based protection for storage bays.',description:'Flame detectors continuously monitor each protection zone. When a fire is detected, the cannon targets the affected bay and starts suppression automatically.'}
 };
-function updateApplicationControl(){applicationPlay.innerHTML=applicationVideo.paused?uiIcons.play:uiIcons.pause;applicationPlay.setAttribute('aria-label',applicationVideo.paused?'Play application film':'Pause application film');}
-applicationVideo.addEventListener('play',updateApplicationControl);applicationVideo.addEventListener('pause',updateApplicationControl);
-applicationPlay.addEventListener('click',()=>{if(applicationVideo.paused)applicationVideo.play().catch(updateApplicationControl);else applicationVideo.pause();});
-function setApplication(key){const view=applicationViews[key];document.querySelectorAll('[data-application]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.application===key)));$('#application-kind').textContent=view.kind;$('#application-title').textContent=view.title;$('#application-description').textContent=view.description;const still=key==='hall';applicationVideo.pause();applicationVideo.hidden=still;applicationImage.hidden=!still;$('#application-illustration-label').hidden=!still;applicationPlay.hidden=still;if(!still){applicationVideo.src='assets/'+(view.file||key)+'.mp4';applicationVideo.poster='assets/'+(view.file||key)+'-poster.jpg';if(!reducedMotion.matches)applicationVideo.play().catch(updateApplicationControl);}updateApplicationControl();}
+const desktopApplicationFilm=ambientFilm(applicationVideo,applicationPlay,()=>!mobileApplications.matches&&!applicationVideo.hidden,'application film');
+function setApplication(key){
+  const view=applicationViews[key];
+  document.querySelectorAll('[data-application]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.application===key)));
+  $('#application-kind').textContent=view.kind;$('#application-title').textContent=view.title;$('#application-description').textContent=view.description;
+  const still=key==='hall';applicationVideo.pause();applicationVideo.hidden=still;applicationImage.hidden=!still;$('#application-illustration-label').hidden=!still;applicationPlay.hidden=still;
+  if(!still){applicationVideo.src='assets/'+(view.file||key)+'.mp4';applicationVideo.poster='assets/'+(view.file||key)+'-poster.jpg';desktopApplicationFilm.userPaused=false;}
+  syncAmbientFilm(desktopApplicationFilm);desktopApplicationFilm.updateControl();
+}
 document.querySelectorAll('[data-application]').forEach((button,i)=>button.addEventListener('click',()=>{setApplication(button.dataset.application);keepManualChoice('applications',i);}));
-if(reducedMotion.matches)applicationVideo.pause();reducedMotion.addEventListener('change',()=>{if(reducedMotion.matches)applicationVideo.pause();});
+
+// Mobile applications: real horizontal scrolling, with each film and copy together.
+const applicationKeys=['field-01','field-02','hall'];
+const applicationLabels=['Outdoor storage','Targeted water delivery','Indoor storage bays'];
+const mobileGallery=document.createElement('div');mobileGallery.className='mobile-applications';
+const leftArrow='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m10 3-5 5 5 5"/></svg>';
+const rightArrow='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>';
+mobileGallery.innerHTML=`<div class="application-card-track" role="region" aria-roledescription="carousel" aria-label="Water Cannon applications" tabindex="0">${applicationKeys.map((key,i)=>{
+  const view=applicationViews[key],file=view.file||key;
+  const media=key==='hall'?'<img src="assets/hall.webp" alt="Illustration of Water Cannon protection in indoor storage bays" loading="lazy"><span class="card-illustration">Application illustration</span>':`<video muted loop playsinline preload="none" data-src="assets/${file}.mp4" poster="assets/${file}-poster.jpg" aria-label="${applicationLabels[i]} film"></video><button class="card-film-control" aria-label="Play ${applicationLabels[i]} film">${uiIcons.play}</button>`;
+  return `<article class="application-card" role="group" aria-roledescription="slide" aria-label="${i+1} of 3: ${applicationLabels[i]}"><div class="application-card-media">${media}</div><div class="application-card-copy"><h3>${applicationLabels[i]}</h3><p>${view.description}</p></div></article>`;
+}).join('')}</div><div class="application-card-controls"><div class="application-card-dots" role="group" aria-label="Choose application">${applicationLabels.map((label,i)=>`<button data-card="${i}" aria-label="Show ${label}" aria-pressed="${i===0}"><span></span></button>`).join('')}</div><div class="application-card-arrows"><button class="application-previous" aria-label="Previous application" disabled>${leftArrow}</button><button class="application-next" aria-label="Next application">${rightArrow}</button></div></div>`;
+$('.application-showcase').append(mobileGallery);
+const cardTrack=mobileGallery.querySelector('.application-card-track');
+const applicationCards=[...cardTrack.children];let activeApplicationCard=0;
+applicationCards.forEach((card,i)=>{const video=card.querySelector('video');if(video)ambientFilm(video,card.querySelector('button'),()=>mobileApplications.matches&&activeApplicationCard===i,applicationLabels[i]+' film');});
+function updateApplicationCard(){
+  if(!mobileApplications.matches)return;
+  const trackLeft=cardTrack.getBoundingClientRect().left;
+  activeApplicationCard=applicationCards.reduce((best,card,i)=>Math.abs(card.getBoundingClientRect().left-trackLeft)<Math.abs(applicationCards[best].getBoundingClientRect().left-trackLeft)?i:best,0);
+  mobileGallery.querySelectorAll('[data-card]').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===activeApplicationCard)));
+  mobileGallery.querySelector('.application-previous').disabled=activeApplicationCard===0;
+  mobileGallery.querySelector('.application-next').disabled=activeApplicationCard===2;
+  syncAmbientFilms();
+}
+function showApplicationCard(index){
+  const bounded=Math.max(0,Math.min(2,index));
+  cardTrack.scrollTo({left:cardTrack.scrollLeft+applicationCards[bounded].getBoundingClientRect().left-cardTrack.getBoundingClientRect().left,behavior:reducedMotion.matches?'instant':'smooth'});
+}
+cardTrack.addEventListener('scroll',updateApplicationCard,{passive:true});
+cardTrack.addEventListener('keydown',event=>{if(event.target!==cardTrack)return;if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();showApplicationCard(activeApplicationCard+(event.key==='ArrowRight'?1:-1));}});
+mobileGallery.querySelectorAll('[data-card]').forEach(button=>button.addEventListener('click',()=>showApplicationCard(Number(button.dataset.card))));
+mobileGallery.querySelector('.application-previous').addEventListener('click',()=>showApplicationCard(activeApplicationCard-1));
+mobileGallery.querySelector('.application-next').addEventListener('click',()=>showApplicationCard(activeApplicationCard+1));
+mobileApplications.addEventListener('change',()=>{updateApplicationCard();syncAmbientFilms();});
+addEventListener('resize',updateApplicationCard);
 const languageMenu=document.querySelector('.site-language');
 document.addEventListener('click',e=>{if(!languageMenu.contains(e.target))languageMenu.open=false;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&languageMenu.open){languageMenu.open=false;languageMenu.querySelector('summary').focus();}});

@@ -26,6 +26,7 @@ function updateMenuLayout(){
   sample.remove();
   if(!compact&&navigation.classList.contains('open'))toggleMenu(false);
   siteHeader.classList.toggle('is-compact',compact);
+  document.documentElement.style.setProperty('--site-header-height',siteHeader.getBoundingClientRect().height+'px');
 }
 new ResizeObserver(updateMenuLayout).observe(siteHeader);
 document.fonts.ready.then(updateMenuLayout);

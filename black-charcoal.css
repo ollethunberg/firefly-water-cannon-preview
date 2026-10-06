@@ -89,3 +89,15 @@ footer>a{display:inline-flex;align-items:center;gap:8px}
 [data-theme=charcoal] .benefits article,
 [data-theme=charcoal] .model-visual,
 [data-theme=charcoal] .resources .resource-card{background:rgba(0,0,0,.12);border-color:rgba(167,169,180,.24)}
+
+/* Shared canvas up to 1920px; the black background remains full width. */
+.wrap{max-width:1920px}
+.cinema-frame{display:contents}
+@media(min-width:700px){
+  :root{--pad:clamp(40px,5vw,96px)}
+  .cinema-hero{display:block;padding:0;min-height:calc(100dvh - var(--site-header-height,80px));max-height:none}
+  .cinema-frame{display:flex;position:relative;isolation:isolate;flex-direction:column;justify-content:flex-end;width:100%;min-height:inherit;padding-block:80px 70px}
+  .cinema-heading{padding-inline:0}
+  .cinema-stage{inset:35px var(--pad) 35px 30%}
+  .cinema-control{right:var(--pad)}
+}

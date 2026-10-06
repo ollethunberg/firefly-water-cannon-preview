@@ -83,3 +83,9 @@ footer>a{display:inline-flex;align-items:center;gap:8px}
 .site-header .campaign-link[aria-current=location]{color:#ff652f}
 .site-header.is-compact nav.open .campaign-link[aria-current=location]{color:#ff652f!important}
 [data-theme=charcoal] .site-header .nav-contact[aria-current=location]{border-color:#ff652f;color:#ff652f!important}
+
+/* Selected existing surfaces only: same subtle dark tint as the previous pass.
+   Colour changes preserve all original geometry, typography and spacing. */
+[data-theme=charcoal] .benefits article,
+[data-theme=charcoal] .model-visual,
+[data-theme=charcoal] .resources .resource-card{background:rgba(0,0,0,.12);border-color:rgba(167,169,180,.24)}

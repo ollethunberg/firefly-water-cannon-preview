@@ -47,7 +47,7 @@ const models={dn50:{label:'DN50 / 2 INCH',range:'30',flow:'925',weight:'19 kg'},
 function setModel(key){const m=models[key];document.querySelectorAll('[data-model]').forEach(b=>{const on=b.dataset.model===key;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});$('#model-panel').setAttribute('aria-labelledby',key+'-tab');$('#model-heading').textContent=m.label;$('#range').replaceChildren(document.createTextNode(m.range),Object.assign(document.createElement('span'),{textContent:'m'}));$('#flow').textContent=m.flow;$('#weight').textContent=m.weight;$('#model-image').src='assets/'+key+'.webp';$('#model-image').alt='Firefly '+key.toUpperCase()+' water cannon';}
 document.querySelectorAll('[data-model]').forEach(b=>b.addEventListener('click',()=>setModel(b.dataset.model)));keyboardTabs('[data-model]',b=>setModel(b.dataset.model));
 const films={overview:{title:'Automated Water Cannon — overview',file:'overview.mp4'},product:{title:'Automated Water Cannon — product film',file:'product.mp4'},detection:{title:'Detection & suppression',file:'detection.mp4'},'field-01':{title:'Water Cannon — field footage 01',file:'field-01.mp4'},'field-02':{title:'Water Cannon — field footage 02',file:'field-02.mp4'}};
-const resources=[...Object.entries(films).map(([id,v])=>({id,title:v.title,type:'video'})),{id:'brochure',title:'Automated Water Cannon — product brochure',type:'document'}];
+const resources=[{id:'brochure',title:'Automated Water Cannon — product brochure',type:'document'},...Object.entries(films).map(([id,v])=>({id,title:v.title,type:'video'}))];
 $('#resource-grid').innerHTML=resources.map(r=>r.type==='video'?`<article class="resource-card" data-type="video"><button class="resource-cover" data-video="${r.id}" aria-label="Play ${r.title}"><img src="assets/${r.id}-poster.jpg" alt="" loading="lazy"><span class="play"><span>${uiIcons.play}</span></span></button><div class="resource-body"><div class="resource-meta"><span>VIDEO / MP4</span><span>EN</span></div><h3>${r.title}</h3><button class="text-button" data-video="${r.id}">Watch film ${uiIcons.diagonal}</button></div></article>`:`<article class="resource-card" data-type="document"><a class="doc-cover" href="assets/water-cannon-brochure.pdf" target="_blank" rel="noopener" aria-label="Open Water Cannon product brochure PDF"><div class="paper"><span>Firefly<br>Automated<br>Water Cannon</span><img src="assets/dn50.webp" alt=""><span>PRODUCT BROCHURE</span></div><span>PRODUCT<br>SPECIFICATIONS<br>${uiIcons.down}</span></a><div class="resource-body"><div class="resource-meta"><span>BROCHURE / PDF</span><span>EN · V1.0</span></div><h3>${r.title}</h3><a class="text-button" href="assets/water-cannon-brochure.pdf" download>Download brochure ${uiIcons.down}</a></div></article>`).join('');
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{const f=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(t=>t.setAttribute('aria-pressed',String(t===b)));let n=0;document.querySelectorAll('.resource-card').forEach(c=>{c.hidden=f!=='all'&&c.dataset.type!==f;if(!c.hidden)n++;});$('#resource-count').textContent='Showing '+n+' material'+(n!==1?'s':'');}));
 const dialog=$('#video-dialog'),player=$('#video-player');let opener;
@@ -62,8 +62,8 @@ const mobileApplications=matchMedia('(max-width:699px)');
 const ambientFilms=[];
 const filmVisibility=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
-    const state=ambientFilms.find(item=>item.video===entry.target);
-    state.visible=entry.isIntersecting&&entry.intersectionRatio>=.15;
+    const state=ambientFilms.find(item=>item.visibilityTarget===entry.target);
+    state.visible=entry.isIntersecting&&(state.visibilityTarget===state.video?entry.intersectionRatio>=.15:entry.intersectionRatio>0);
     if(!state.visible)state.userStarted=false;
     syncAmbientFilm(state);
   });
@@ -77,9 +77,10 @@ function syncAmbientFilm(state){
   if(video.dataset.src&&!video.getAttribute('src'))video.src=video.dataset.src;
   if(video.paused)video.play().catch(state.updateControl);
 }
-function ambientFilm(video,button,enabled,label){
+function ambientFilm(video,button,enabled,label,visibilityTarget=video){
   video.muted=true;video.defaultMuted=true;video.playsInline=true;
-  const state={video,visible:false,userPaused:false,userStarted:false,enabled,
+  const bounds=visibilityTarget.getBoundingClientRect();
+  const state={video,visibilityTarget,visible:visibilityTarget!==video&&bounds.bottom>0&&bounds.top<innerHeight&&bounds.right>0&&bounds.left<innerWidth,userPaused:false,userStarted:false,enabled,
     updateControl:()=>{button.innerHTML=video.paused?uiIcons.play:uiIcons.pause;button.setAttribute('aria-label',(video.paused?'Play ':'Pause ')+label);}};
   ambientFilms.push(state);
   ['play','pause','error'].forEach(event=>video.addEventListener(event,state.updateControl));
@@ -88,10 +89,13 @@ function ambientFilm(video,button,enabled,label){
     if(video.paused){state.userPaused=false;state.userStarted=true;if(video.dataset.src&&!video.getAttribute('src'))video.src=video.dataset.src;video.play().catch(state.updateControl);}
     else{state.userPaused=true;state.userStarted=false;video.pause();}
   });
-  state.updateControl();filmVisibility.observe(video);return state;
+  // Safari may pause autoplay when the video itself leaves view before its section.
+  // Keep the hero playing until the whole hero is outside the viewport.
+  if(visibilityTarget!==video)video.addEventListener('pause',()=>syncAmbientFilm(state));
+  state.updateControl();filmVisibility.observe(visibilityTarget);syncAmbientFilm(state);return state;
 }
 const heroVideo=$('#hero-video'),heroPlay=$('#hero-play');
-ambientFilm(heroVideo,heroPlay,()=>true,'hero film');
+ambientFilm(heroVideo,heroPlay,()=>true,'hero film',$('.cinema-hero'));
 function syncAmbientFilms(){ambientFilms.forEach(syncAmbientFilm);}
 reducedMotion.addEventListener('change',syncAmbientFilms);
 document.addEventListener('visibilitychange',syncAmbientFilms);

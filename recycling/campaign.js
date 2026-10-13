@@ -1,6 +1,19 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),header=$('.site-header'),nav=$('#navigation'),menu=$('.menu-toggle'),isWaterCannon=document.body.dataset.page==='water-cannon';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const hero=$('#recycling-hero-video'),heroControl=$('#recycling-hero-play');
+if(hero){
+ const heroSection=$('.recycling-hero');let userPaused=false,userStarted=false;
+ hero.muted=true;hero.defaultMuted=true;hero.playsInline=true;
+ const playIcon='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m5 3 8 5-8 5Z"/></svg>',pauseIcon='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10"/></svg>';
+ function update(){heroControl.innerHTML=hero.paused?playIcon:pauseIcon;heroControl.setAttribute('aria-label',(hero.paused?'Play':'Pause')+' hero film');}
+ function sync(){const r=heroSection.getBoundingClientRect();const visible=r.bottom>0&&r.top<innerHeight;if(!visible||document.hidden||userPaused||(reduced.matches&&!userStarted)){if(!visible)userStarted=false;if(!hero.paused)hero.pause();return;}if(hero.paused)hero.play().catch(update);}
+ heroControl.addEventListener('click',()=>{if(hero.paused){userPaused=false;userStarted=true;sync();}else{userPaused=true;userStarted=false;hero.pause();}});
+ ['play','pause','error'].forEach(event=>hero.addEventListener(event,update));hero.addEventListener('pause',sync);
+ ['loadedmetadata','loadeddata','canplay'].forEach(event=>hero.addEventListener(event,sync));
+ new IntersectionObserver(sync,{threshold:0}).observe(heroSection);
+ document.addEventListener('visibilitychange',sync);addEventListener('pageshow',sync);document.addEventListener('pointerup',sync,{passive:true});reduced.addEventListener('change',sync);update();sync();
+}
 // The copied Water Cannon retains its own tested menu and media controller.
 if(!isWaterCannon){
  const close=$('.menu-close');

@@ -7,12 +7,12 @@ if(hero){
  hero.muted=true;hero.defaultMuted=true;hero.playsInline=true;
  const playIcon='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m5 3 8 5-8 5Z"/></svg>',pauseIcon='<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10"/></svg>';
  function update(){heroControl.innerHTML=hero.paused?playIcon:pauseIcon;heroControl.setAttribute('aria-label',(hero.paused?'Play':'Pause')+' hero film');}
- function sync(){const r=heroSection.getBoundingClientRect();const visible=r.bottom>0&&r.top<innerHeight;if(!visible||document.hidden||userPaused||(reduced.matches&&!userStarted)){if(!visible)userStarted=false;if(!hero.paused)hero.pause();return;}if(hero.paused)hero.play().catch(update);}
+ function sync(){const r=heroSection.getBoundingClientRect();const visible=r.bottom>0&&r.top<innerHeight;if(!visible||document.hidden||document.querySelector('dialog[open]')||userPaused||(reduced.matches&&!userStarted)){if(!visible)userStarted=false;if(!hero.paused)hero.pause();return;}if(hero.paused)hero.play().catch(update);}
  heroControl.addEventListener('click',()=>{if(hero.paused){userPaused=false;userStarted=true;sync();}else{userPaused=true;userStarted=false;hero.pause();}});
  ['play','pause','error'].forEach(event=>hero.addEventListener(event,update));hero.addEventListener('pause',sync);
  ['loadedmetadata','loadeddata','canplay'].forEach(event=>hero.addEventListener(event,sync));
  new IntersectionObserver(sync,{threshold:0}).observe(heroSection);
- document.addEventListener('visibilitychange',sync);addEventListener('pageshow',sync);document.addEventListener('pointerup',sync,{passive:true});reduced.addEventListener('change',sync);update();sync();
+ document.addEventListener('visibilitychange',sync);document.addEventListener('campaign:dialogchange',sync);addEventListener('pageshow',sync);document.addEventListener('pointerup',sync,{passive:true});reduced.addEventListener('change',sync);update();sync();
 }
 // The copied Water Cannon retains its own tested menu and media controller.
 if(!isWaterCannon){
@@ -32,6 +32,23 @@ document.querySelectorAll('[data-language]').forEach(button=>button.addEventList
 const language=$('.site-language');document.addEventListener('click',e=>{if(language&&!language.contains(e.target))language.open=false;});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&language?.open){language.open=false;language.querySelector('summary').focus();}});
 document.querySelectorAll('[data-resource-filter]').forEach(button=>button.addEventListener('click',()=>{const filter=button.dataset.resourceFilter;document.querySelectorAll('[data-resource-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));let count=0;document.querySelectorAll('.material-card').forEach(card=>{card.hidden=filter!=='all'&&card.dataset.kind!==filter;if(!card.hidden)count++;});$('.resource-count').textContent='Showing '+count+' material'+(count===1?'':'s');}));
 $('#campaign-contact')?.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target),result=$('#enquiry-result');result.textContent='Enquiry preview — nothing has been sent.\n\n'+d.get('name')+' · '+d.get('company')+'\n'+d.get('email')+'\n\n'+d.get('message');result.hidden=false;});
+// A play symbol opens the film directly. Media is fetched only after that choice.
+const filmDialog=$('#campaign-video-dialog'),filmPlayer=$('#campaign-video-player');
+if(filmDialog&&filmPlayer){
+ let filmOpener;
+ function motionChange(){document.dispatchEvent(new Event('campaign:dialogchange'));}
+ document.addEventListener('click',e=>{
+  const button=e.target.closest('[data-resource-video]');if(!button)return;
+  filmOpener=button;$('#campaign-video-error').hidden=true;
+  filmPlayer.src='assets/overview.mp4';filmPlayer.muted=true;filmPlayer.playsInline=true;
+  filmDialog.showModal();$('#campaign-close-video').focus();motionChange();
+  filmPlayer.play().catch(()=>{});
+ });
+ $('#campaign-close-video').addEventListener('click',()=>filmDialog.close());
+ filmDialog.addEventListener('click',e=>{if(e.target!==filmDialog)return;const r=filmDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)filmDialog.close();});
+ filmDialog.addEventListener('close',()=>{filmPlayer.pause();filmPlayer.removeAttribute('src');filmPlayer.load();filmOpener?.focus();motionChange();});
+ filmPlayer.addEventListener('error',()=>{if(filmPlayer.getAttribute('src'))$('#campaign-video-error').hidden=false;});
+}
 // A broken image remains understandable and does not show an empty media area.
 document.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{if(!img.alt)return;const text=document.createElement('span');text.className='media-fallback';text.textContent=img.alt;img.replaceWith(text);},{once:true}));
 })();

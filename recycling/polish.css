@@ -113,30 +113,25 @@ button.material-film{width:100%;padding:0;border:0;background:#000;color:#fff;cu
  .wc-copy .filters button:after{inset:-3px 0}
 }
 
-/* Recycling footage keeps its full frame, with a uniform contrast layer. */
-.recycling-hero .hero-industry{inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:1;mask:none;-webkit-mask:none;filter:none}
+/* Recycling footage fills the viewport behind copy and navigation. */
+.recycling-hero .hero-industry{inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;mask:none;-webkit-mask:none;filter:none}
 .recycling-hero .hero-frame:after{background:rgba(0,0,0,.58)}
 .recycling-hero .hero-description{color:#fff}
-@media(max-width:699px){
- .recycling-hero .hero-frame{flex-direction:column;align-items:stretch;justify-content:flex-start;min-height:calc(100svh - var(--header-height));padding-top:calc(51.875vw + 36px);padding-bottom:52px}
- .recycling-hero .hero-industry{object-position:center top}
- .recycling-hero .hero-film-control{top:calc(51.875vw - 58px);bottom:auto}
-}
 
 /* A compact navigation layer sits on the Recycling footage. */
 body[data-page=overview] .site-header{position:fixed;inset:0 0 auto;min-height:64px;padding-block:10px;background:transparent;transition:background .2s}
 body[data-page=overview] .site-header.is-compact{min-height:64px;padding-block:10px}
 body[data-page=overview] .site-header.has-scrolled{background:rgba(0,0,0,.94)}
-body[data-page=overview] .recycling-hero .hero-frame{min-height:100svh;padding-top:calc(var(--header-height) + 32px)}
-body[data-page=overview] .recycling-hero .hero-industry{object-position:center top}
-@media(max-width:699px){body[data-page=overview] .recycling-hero .hero-frame{padding-top:calc(51.875vw + 36px)}}
-
-@media(min-width:700px){
- body[data-page=overview] .recycling-hero .hero-copy{margin-bottom:max(0px,calc(100svh - min(51.875vw,996px) - 48px))}
- body[data-page=overview] .recycling-hero .hero-film-control{top:min(calc(min(51.875vw,996px) - 60px),calc(100svh - 72px));bottom:auto}
+body[data-page=overview] .recycling-hero .hero-frame{max-width:none;min-height:100svh;flex-direction:row;align-items:flex-end;justify-content:flex-start;padding-top:calc(var(--header-height) + 32px);padding-bottom:80px;padding-inline:max(var(--pad),calc((100% - 1920px)/2 + var(--pad)))}
+body[data-page=overview] .recycling-hero .hero-copy{margin-bottom:0}
+body[data-page=overview] .recycling-hero .hero-film-control{top:auto;bottom:24px;right:max(var(--pad),calc((100% - 1920px)/2 + var(--pad)))}
+@media(max-width:699px){
+ body[data-page=overview] .recycling-hero .hero-frame{padding-bottom:88px}
 }
-@media(min-width:700px) and (max-width:899px){
- body[data-page=overview] .recycling-hero .hero-frame{flex-direction:column;align-items:stretch;justify-content:flex-start;padding-top:calc(51.875vw + 36px);padding-bottom:52px}
- body[data-page=overview] .recycling-hero .hero-copy{margin-bottom:0}
- body[data-page=overview] .recycling-hero .hero-film-control{top:calc(51.875vw - 58px);bottom:auto}
+@media(max-height:650px){
+ body[data-page=overview] .recycling-hero .hero-frame{padding-top:88px;padding-bottom:64px}
+ body[data-page=overview] .recycling-hero h1{font-size:clamp(32px,4.5vw,52px);margin-bottom:16px}
+ body[data-page=overview] .recycling-hero .hero-byline{font-size:17px;margin-bottom:12px}
+ body[data-page=overview] .recycling-hero .hero-description{margin-bottom:16px}
+ body[data-page=overview] .recycling-hero .hero-film-control{bottom:12px}
 }
